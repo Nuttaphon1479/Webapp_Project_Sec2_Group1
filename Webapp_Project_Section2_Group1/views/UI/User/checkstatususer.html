@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- สายสำคัญแรก -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- สายสำคัญที่สอง -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <!-- สายสำคัญที่สาม -->
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <!-- สายสำคัญที่สี่ (Notiflix) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/notiflix@2.7.0/dist/notiflix-aio.min.js"></script> -->
+    <!-- สายสำคัญอื่น ๆ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/public/css/navbar1.css">
+    <!-- JS navbar -->
+    <!-- <script src="/public/js/navbar.js"></script> -->
+    <title>Checkstatususer</title>
+    <style>
+        #logo {
+            width: 50px;
+        }
+
+        #textStatus {
+            width: 175px;
+            background-color: blue;
+            text-align: center;
+            /* Center the text horizontally */
+            border-radius: 3px;
+            /* Optional: Add rounded corners */
+            margin: 0 10px;
+            /* Center the box horizontally */
+            font-size: 25px;
+        }
+
+        .textStatusApprove {
+            color: green;
+            font-size: 20px;
+        }
+
+        .textStatusWaiting {
+            color: grey;
+            font-size: 20px;
+        }
+
+        .textStatusReject {
+            color: red;
+            font-size: 20px;
+        }
+
+        #picCheck {
+            width: 50px;
+        }
+
+        .topcon div {
+            display: flex;
+            align-items: center;
+            /* จัดให้องค์ประกอบภายในอยู่ตรงกลางแนวตั้ง */
+        }
+
+        .topcon {
+            background-color: rgb(255, 255, 255);
+            border-radius: 10px;
+        }
+
+        .picItem {
+            width: 50px;
+        }
+
+        #table-body td {
+            text-align: center;
+        }
+
+        #prevBtn {
+            display: inline-block !important;
+        }
+
+        #nextBtn {
+            display: inline-block !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- navbar -->
+    <div class="topnav">
+        <div class="active nav-item">
+            <div class="row">
+                <img id="logo" src="/public/img/MFU.png" style="width: 86px;">
+                <p class="text1 col mt-3">MFU ASSET BORROW</p>
+                <p class="user-text col mt-3 text-end" id="title"></p>
+                <p class="title col mt-3 text-end mx-4" id="userName">Name: </p>
+            </div>
+            <!-- End of Main Content -->
+        </div>
+        <div id="myLinks">
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid px-2">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mt-2 mb-2 mb-lg-0">
+                            <!-- <li class="nav-item">
+                                <i class="bi bi-clipboard-data"></i>
+                                <a class="navbar-link" href='/borrower'>Dashboard</a>
+                            </li> -->
+                            <li class="nav-item">
+                                <i class="bi bi-card-list"></i>
+                                <a class="navbar-link" href='/borrower/itemlist'>Item List</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <a class="navbar-link" href='/borrower/checkstatus'>Check Status</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-danger" href="/logout">Logout</a>
+                </div>
+            </nav>
+        </div>
+
+    </div>
+    <!-- detail -->
+    <div class="table container-fluid pt-5 " id="conbody" style="margin-left: 12px;">
+        <div class="container-fluid row rounded tablecolor">
+            <div class="container bg-white mt-4 mb-4 rounded tablecolor2">
+                <div class="container-fluid d-flex p-2 tablecolor3">
+                    <div class="d-inline-block"><img id="logo" src="/public/img/borrow.png"></div>
+                    <div class="d-inline-flex w-75 p-2">
+                        <div
+                            class="container font-weight-bold rounded  text-center text-white w-25 pt-2 pb-2 p-5 showstatus">
+                            Check Status</div>
+                        <div class="d-inline-block mx-3"></div>
+                        <div class="input-group">
+                            <input type="search" id="searchInput" class="form-control rounded" placeholder="Search"
+                                aria-label="Search" aria-describedby="search-addon" />
+                            <!-- <div class="pagination px-5 ">
+                                    <button id="prevBtn" class="btn btn-outline-success" onclick="prevPage()">Previous</button>
+                                    <span id="currentPage">Page 1</span>
+                                    <button id="nextBtn" class="btn btn-outline-success" onclick="nextPage()">Next</button>
+                                </div> -->
+                        </div>
+
+                    </div>
+                </div>
+                <table class="table  mt-2 mb-2">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Item</th>
+                            <th scope="col">Borrow Date</th>
+                            <th scope="col">Approve by</th>
+                            <th scope="col">Return Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblProduct">
+                    </tbody>
+                </table>
+                <div class="pagination pt-5 d-flex justify-content-center ">
+                    <button id="prevBtn" class="btn btn-outline-success mx-3" onclick="prevPage()">
+                        &lt;</button>
+                    <span id="currentPage">Page 1</span>
+                    <button id="nextBtn" class="btn btn-outline-success mx-3" onclick="nextPage()">></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/user')
+                .then(response => response.json())
+                .then(userData => {
+                    if (userData && userData.name) {
+                        const userNameElement = document.getElementById('userName');
+                        userNameElement.textContent = `Name: ${userData.name}`;
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let userId;
+            let filteredProducts = [];
+            let currentPage = 1;
+            const itemsPerPage = 8; // Adjust the number of items per page as needed
+
+            const searchInput = document.getElementById('searchInput');
+            const tblProduct = document.getElementById('tblProduct');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const currentPageSpan = document.getElementById('currentPage');
+
+            searchInput.addEventListener('input', filterProducts);
+            getProducts(); // Initial data load
+
+            function filterProducts() {
+                currentPage = 1;
+                getProducts(searchInput.value);
+            }
+
+            async function getProducts(searchTerm = '') {
+                try {
+                    const response = await fetch('/checkuser');
+                    if (response.ok) {
+                        const data = await response.json();
+                        filteredProducts = data.filter(asset =>
+                            (asset.borrowerid && asset.borrowerid.toString().includes(searchTerm)) ||
+                            (asset.assetname && asset.assetname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                            (asset.approverby && asset.approverby.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                            (asset.status && asset.status.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                            (asset.borrowingdate && asset.borrowingdate.includes(searchTerm)) ||
+                            (asset.returndate && asset.returndate.includes(searchTerm))
+                        );
+
+                        renderProducts(filteredProducts, userId);
+                        updatePagination(filteredProducts.length);
+                    } else if (response.status === 500) {
+                        console.log('Server returned a 500 status.');
+                        const errorData = await response.text();
+                        throw new Error(errorData);
+                    }
+                } catch (err) {
+                    console.error('An error occurred:', err);
+                    // Notiflix.Report.failure('Error', err.message, 'Close');
+                }
+            }
+
+            getUser();
+            async function getUser() {
+                try {
+                    const response = await fetch('/user');
+                    if (response.ok) {
+                        const data = await response.json();
+                        userId = data.userid; // Assign value to userId
+
+                        // Move the logic that relies on userId here
+                        getProducts(); // Initial data load
+                    } else {
+                        throw Error('Connection error');
+                    }
+                } catch (error) {
+                    alert(error.message);
+                }
+            }
+
+            function renderProducts(data) {
+                let rows = '';
+                const userborrowID = userId;
+                // Filter data based on userborrowID
+                const filteredData = getfilteredData();
+
+                // Calculate the start and end indices for the current page
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+
+                const currentData = filteredData.slice(startIndex, endIndex);
+
+                currentData.forEach(function (asset) {
+                    if (asset.messageText != null) {
+                        const borrowingDate = new Date(asset.borrowingdate);
+                        const returnDate = new Date(asset.returndate);
+                        const brwDate = borrowingDate.toISOString().split('T')[0];
+                        const rtnDate = returnDate.toISOString().split('T')[0];
+
+                        rows += `<tr><th>${asset.borrowerid}</th>`;
+                        rows += `<td><img class="picItem" src="/public/img/${asset.assetimage}"></td>`;
+                        rows += `<td>${asset.assetname}</td>`;
+                        rows += `<td>${brwDate}</td>`;
+                        if (asset.approverby == null) {
+                            rows += `<td>-</td>`;
+                        } else {
+                            rows += `<td>${asset.approverby}</td>`;
+                        }
+                        rows += `<td>${rtnDate}</td>`;
+                        if (asset.status == 'approved') {
+                            rows += `<td><p class="text-success">Approved</p></td>`;
+                        } else if (asset.status == 'reject') {
+                            rows += `<td><p class="text-danger">Reject</p></td>`;
+                        } else {
+                            rows += `<td><p class="text-center">Pending</p></td>`;
+                        }
+                        rows += `<td><p>${asset.messageText}</p></td></tr>`;
+                    }
+                });
+
+                tblProduct.innerHTML = rows;
+                updatePaginationInfo(filteredData.length);
+
+                function getfilteredData() {
+                    return data.filter(asset => asset.userborrowID == userborrowID);
+                }
+
+                function updatePaginationInfo() {
+                    const filteredData = getfilteredData();
+                    const totalFilteredData = filteredData.length;
+
+                    const totalPages = Math.ceil(totalFilteredData / itemsPerPage);
+                    const currentPageSpan = document.getElementById('currentPage');
+                    currentPageSpan.textContent = `Page ${currentPage} of ${totalPages}`;
+                }
+
+                function prevPage() {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderProducts(data);
+                    }
+                }
+
+                function nextPage() {
+                    const totalPages = Math.ceil(data.length / itemsPerPage);
+                    const totalfilteredPages = Math.ceil(getfilteredData().length / itemsPerPage);
+
+                    if (currentPage < totalfilteredPages) {
+                        currentPage++;
+                        renderProducts(data);
+                    }
+                }
+
+                searchInput.addEventListener('input', filterProducts);
+                prevBtn.addEventListener('click', prevPage);
+                nextBtn.addEventListener('click', nextPage);
+
+            }
+
+        });
+    </script>
+
+</body>

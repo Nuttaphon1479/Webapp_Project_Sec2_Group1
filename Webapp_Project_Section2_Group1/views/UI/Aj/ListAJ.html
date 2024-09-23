@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ListOwner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <!-- <script src="/public/js/navbar.js"></script> -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/public/css/navbar1.css">
+
+    <style>
+        #logo {
+            width: 50px;
+        }
+
+        #btn_listAj .btn {
+            border-radius: 0px 0px 5px 5px;
+            width: 48%;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- navbar -->
+    <div class="topnav">
+        <div class="active nav-item">
+            <div class="row">
+                <img id="logo" src="/public/img/MFU.png" style="width: 86px;">
+                <p class="text1 col mt-3">MFU ASSET BORROW</p>
+                <p class="title col mt-3 text-end mx-4" id="userName">Name: </p>
+            </div>
+        </div>
+        <div id="myLinks">
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mt-2 mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <i class="bi bi-clipboard-data"></i>
+                                <a class="navbar-link" href='/lender'>Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-card-list"></i>
+                                <a class="navbar-link" href='/lender/itemlist'>Item List</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <a class="navbar-link" href='/lender/yourlist'>Your List</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-clock-history"></i>
+                                <a class="navbar-link" href='/lender/history'>History</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-danger ml-auto" href="/logout">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- detail -->
+    <div class="container-fluid pt-5 tablecolor3" id="conbody1">
+        <div class="container-fluid">
+            <div class="d-inline-block">
+                <img id="logo" src="/public/img/borrow.png">
+            </div>
+            <div class="d-inline-flex w-75 p-2">
+                <div class="contaner font-weight-bold rounded showstatus text-center w-25  pt-2 pb-2 p-5 mx-3">
+                    Your List
+                </div>
+                <div class="input-group w-50">
+                    <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                        aria-describedby="search-addon" id="search-bar" oninput="searchItems()" />
+                </div>
+            </div>
+
+            <table class="table mt-2 mb-2">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Item</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Borrowed by</th>
+                        <th scope="col">Borrow Date</th>
+                        <th scope="col">Return Date</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="borrowingTableBody">
+                    <!-- Data will be dynamically inserted here -->
+                </tbody>
+            </table>
+            <div class="pagination pt-5 d-flex justify-content-center">
+                <button id="prevBtn" class="btn btn-outline-success mx-3" onclick="prevPage()">
+                    &lt;
+                </button>
+                <span id="currentPage">Page 1</span>
+                <button id="nextBtn" class="btn btn-outline-success mx-3" onclick="nextPage()">
+                    &gt;
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const itemsPerPage = 8;
+        let currentPage = 1;
+        let data = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/user')
+                .then(response => response.json())
+                .then(userData => {
+                    if (userData && userData.name) {
+                        const userNameElement = document.getElementById('userName');
+                        userNameElement.textContent = `Name: ${userData.name}`;
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            getBorrowingData();
+            checkLoginStatus();
+        });
+
+        async function getBorrowingData() {
+            try {
+                const response = await fetch(`/getBorrowingData?page=${currentPage}`);
+                if (response.ok) {
+                    const allData = await response.json();
+                    displayBorrowingData(allData);
+                } else {
+                    console.error('Error fetching data');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function displayBorrowingData(allData) {
+            try {
+                data = allData;
+                console.log('All Data:', data);
+                const tableBody = document.getElementById('borrowingTableBody');
+                let rows = '';
+
+                const pendingData = getPendingData();
+
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedData = pendingData.slice(startIndex, endIndex);
+
+                if (paginatedData.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="7">No Request found</td></tr>';
+                    return;
+                    return;
+                }
+
+                for (const borrowing of paginatedData) {
+                    if (borrowing.status === 'pending') {
+                        console.log('Borrowing:', borrowing);
+                        const borrowerName = await getUserNameById(borrowing.userborrowID);
+                        const assetName = await getAssetNameById(borrowing.assetid);
+                        
+                        rows += `<tr>`;
+                        rows += `<td>${borrowing.borrowerID}</td>`;
+                        rows += `<td>${assetName}</td>`;
+                        rows += `<td>${borrowing.status}</td>`;
+                        rows += `<td class="searchable-item">${borrowerName}</td>`;
+                        rows += `<td>${new Date(borrowing.borrowingDate).toLocaleDateString('en-GB')}</td>`;
+                        rows += `<td>${new Date(borrowing.returnDate).toLocaleDateString('en-GB')}</td>`;
+                        rows += `<td>`;
+                        rows += `<button class="btn btn-outline-success btn_Accept container-fluid text-center rounded-pill w-50 pt-2 pb-2 btn_Accept" data-borrow-id="${borrowing.borrowerID}">Accept</button>`;
+                        rows += `<button class="btn btn-outline-danger btn_Reject container-fluid text-center rounded-pill w-50 pt-2 pb-2 btn_Reject" data-borrow-id="${borrowing.borrowerID}">Reject</button>`;
+                        rows += `</td>`;
+                        rows += `</tr>`;
+                    }
+                }
+                console.log('HTML Rows:', rows);
+                tableBody.innerHTML = rows;
+                updatePaginationInfo(pendingData.length);
+
+                const acceptButtons = document.querySelectorAll('.btn_Accept');
+                acceptButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const borrowId = this.getAttribute('data-borrow-id');
+                        handleAcceptButtonClick(borrowId);
+                    });
+                });
+
+                const rejectButtons = document.querySelectorAll('.btn_Reject');
+                rejectButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const borrowId = this.getAttribute('data-borrow-id');
+                        handleRejectButtonClick(borrowId);
+                    });
+                });
+            } catch (error) {
+                console.error('Error displaying data:', error);
+            }
+        }
+
+        function getPendingData() {
+            const sortedData = data.filter(borrowing => borrowing.status === 'pending')
+                .sort((a, b) => b.borrowerID - a.borrowerID);
+
+            return sortedData;
+        }
+
+        function updatePaginationInfo() {
+            const filteredData = getPendingData();
+            const totalFilteredData = filteredData.length;
+
+            const totalPages = Math.ceil(totalFilteredData / itemsPerPage);
+            const currentPageSpan = document.getElementById('currentPage');
+            currentPageSpan.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayBorrowingData(data);
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(data.length / itemsPerPage);
+            const totalPendingPages = Math.ceil(getPendingData().length / itemsPerPage);
+
+            if (currentPage < totalPendingPages) {
+                currentPage++;
+                displayBorrowingData(data);
+            }
+        }
+
+        // async function checkLoginStatus() {
+        //     try {
+        //         const response = await fetch('/user');
+        //         if (response.ok) {
+        //             const userData = await response.json();
+        //             if (userData.username) {
+        //                 document.getElementById('loggedInUserName').innerText = userData.username;
+        //             }
+        //         } else {
+        //             console.error('Error fetching user data');
+        //         }
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // }
+
+        function searchItems() {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById("search-bar");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("borrowingTableBody");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                tr[i].style.display = "";
+            }
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                let found = false;
+                for (j = 0; j < td.length; j++) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    tr[i].style.display = "none";
+                }
+            }
+
+            updatePaginationInfo();
+        }
+
+        async function getAssetNameById(assetId) {
+            try {
+                const response = await fetch(`/getAssetNameById/${assetId}`);
+                if (response.ok) {
+                    const assetData = await response.json();
+                    return assetData.assetname || 'Unknown';
+                } else {
+                    console.error('Error fetching asset data');
+                    return 'Unknown';
+                }
+            } catch (error) {
+                console.error(error);
+                return 'Unknown';
+            }
+        }
+
+        async function getUserNameById(userId) {
+            try {
+                const response = await fetch(`/getUserNameById/${userId}`);
+                if (response.ok) {
+                    const userData = await response.json();
+                    return userData.name || 'Unknown';
+                } else {
+                    console.error('Error fetching user data');
+                    return 'Unknown';
+                }
+            } catch (error) {
+                console.error(error);
+                return 'Unknown';
+            }
+        }
+
+
+        function handleAcceptButtonClick(borrowId) {
+            Swal.fire({
+                title: 'Are you sure to Accept?',
+                text: 'Accept a borrow session.',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonColor: 'green',
+                cancelButtonColor: 'red',
+                confirmButtonText: 'Yes, Sure!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateBorrowStatus(borrowId, 'approved');
+                    updateAssetAndBorrowingStatus2(borrowId);
+                    location.reload();
+                }
+            });
+        }
+
+        async function sendAcceptRequest(borrowId) {
+            const requestData = {
+                approverby: await getCurrentUserName()
+            };
+            updateBorrowStatus(borrowId, 'approved', requestData);
+        }
+
+        async function getCurrentUserName() {
+            try {
+                const response = await fetch('/user');
+                if (response.ok) {
+                    const userData = await response.json();
+                    return userData.name || 'DefaultUserName';
+                } else {
+                    console.error('Error fetching user data');
+                    return 'DefaultUserName';
+                }
+            } catch (error) {
+                console.error(error);
+                return 'DefaultUserName';
+            }
+        }
+
+        app.use((req, res, next) => {
+            res.locals.session = req.session;
+            next();
+        });
+
+        function handleRejectButtonClick(borrowId) {
+            Swal.fire({
+                title: 'Are you sure to Reject?',
+                text: 'Reject a borrow session, Please give a reason.',
+                input: 'text',
+                inputPlaceholder: 'Give a reason',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Confirm Reason!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const reason = result.value;
+                    sendRejectRequest(borrowId, reason);
+                    updateAssetAndBorrowingStatus(borrowId);
+                }
+            });
+        }
+
+        async function sendRejectRequest(borrowId, reason) {
+            const requestData = {
+                reason: reason,
+                approverby: await getCurrentUserName()
+            };
+
+            fetch(`/rejectBorrowRequest/${borrowId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Borrow request rejected successfully');
+                })
+                .catch(error => {
+                    console.error('Error during reject request:', error);
+                });
+        }
+
+        async function updateAssetAndBorrowingStatus(borrowId) {
+            // ดึงข้อมูล assetId จาก borrowingRequest
+            fetch(`/getAssetIdByBorrowId/${borrowId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const assetId = data.assetid;
+                    // เรียกใช้ฟังก์ชัน updateAssetStatus และ updateBorrowStatus
+                    updateAssetStatus(assetId, 'available');
+                    updateBorrowStatus(borrowId, 'reject');
+                })
+                .catch(error => console.error('Error getting asset ID:', error));
+        }
+
+        async function updateAssetAndBorrowingStatus2(borrowId) {
+            fetch(`/getAssetIdByBorrowId/${borrowId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const assetId = data.assetid;
+                    // เรียกใช้ฟังก์ชัน updateAssetStatus และ updateBorrowStatus
+                    updateAssetStatus(assetId, 'borrowed');
+                })
+                .catch(error => console.error('Error getting asset ID:', error));
+        }
+
+        // เพิ่มฟังก์ชัน updateAssetStatus
+        async function updateAssetStatus(assetId, newStatus) {
+            const updateData = {
+                status: newStatus
+            };
+            fetch(`/assetstaffReturn/${assetId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updateData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Asset status updated successfully');
+                })
+                .catch(error => {
+                    console.error('Error updating asset status:', error);
+                });
+        }
+
+        async function updateBorrowStatus(borrowId, newStatus) {
+            const updateData = {
+                status: newStatus,
+                approverby: await getCurrentUserName()
+            };
+
+            try {
+                const response = await fetch(`/updateBorrowStatus/${borrowId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData),
+                });
+
+                if (response.ok) {
+                    console.log(`Borrow status updated successfully for borrow ID ${borrowId}`);
+                    // รีโหลดหน้าเมื่อทำงานเสร็จสมบูรณ์
+                    location.reload();
+                } else {
+                    console.error('Error updating borrow status');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+
+</html>

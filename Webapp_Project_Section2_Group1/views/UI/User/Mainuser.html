@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MainUser</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../public/css/cdn.jsdelivr.net_npm_bootstrap@5.2.3_dist_css_bootstrap.min.css">
+    <script src="../public/js/cdn.jsdelivr.net_npm_bootstrap@5.2.3_dist_js_bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/dashboard.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- CSS navbar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/public/css/navbar1.css">
+    <!-- JS navbar -->
+    <!-- <script src="/public/js/navbar.js"></script> -->
+    <style>
+        #logo {
+            width: 50px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- navbar -->
+    <div class="topnav">
+        <div class="active nav-item">
+            <div class="row">
+                <img id="logo" src="/public/img/MFU.png" style="width: 86px;">
+                <p class="text1 col mt-3">MFU ASSET BORROW</p>
+                <p class="user-text col mt-3 text-end" id="title"></p>
+                <p class="title col mt-3 text-end mx-4" id="userName">Name: </p>
+            </div>
+            <!-- End of Main Content -->
+        </div>
+        <div id="myLinks">
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid px-2">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mt-2 mb-2 mb-lg-0">
+                            <!-- <li class="nav-item">
+                                <i class="bi bi-clipboard-data"></i>
+                                <a class="navbar-link" href='/borrower'>Dashboard</a>
+                            </li> -->
+                            <li class="nav-item">
+                                <i class="bi bi-card-list"></i>
+                                <a class="navbar-link" href='/borrower/itemlist'>Item List</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <a class="navbar-link" href='/borrower/checkstatus'>Check Status</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-danger" href="/logout">Logout</a>
+                </div>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- detail -->
+    <div class="container-fluid p-3 tablecolor3" id="conbody1">
+        <div class="container-fluid">
+            <div class="d-inline-block"><img id="logo" src="/public/img/borrow.png">
+            </div>
+            <div class="d-inline-flex w-75 p-2">
+                <div class="contaner font-weight-bold rounded showstatus text-center w-25  pt-2 pb-2  mx-3">
+                    Item List</div>
+                <div class="input-group w-50">
+                    <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                        aria-describedby="search-addon" id="search-bar" oninput="searchItems()" />
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-4 g-4" id="tblAsset">
+                <!-- <div class="col searchable-item" data-title="Laptop1">
+                    <div class="card text-dark bg-light mb-3" id="card1">
+                        <div class="card-header">
+                            <h5 class="card-title">Laptop1</h5>
+                        </div>
+                        <div class="card h-100">
+                            <img src="/public/img/laptop.png" class="card-img-top" alt="Item" style="width: 100%;">
+                            <div class="card-body">
+                                <p class="card-text">ID:001</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-3">
+                            <button type="button" class="btn btn-outline-success btn_Borrow btn-lg">Available</button>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+            <div class="pagination pt-5 d-flex justify-content-center ">
+                <button id="prevBtn" class="btn btn-outline-success mx-3" onclick="prevPage()"><</button>
+                        <span id="currentPage">Page 1</span>
+                        <button id="nextBtn" class="btn btn-outline-success mx-3" onclick="nextPage()">></button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="borrowModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="borrowModalLabel">Borrow Item</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="borrowForm" action="/assetrequest" method="post">
+                        <input type="hidden" id="selectedAssetID" name="assetid">
+
+                        <div class="form-group">
+                            <label for="borrowingDate">Borrowing Date:</label>
+                            <input type="date" name="borrowdate" class="form-control" id="borrowingDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="returnDate">Return Date:</label>
+                            <input type="date" name="returndate" class="form-control" id="returnDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Borrow</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 4; // Adjust the number of items per page as needed
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/user')
+                .then(response => response.json())
+                .then(userData => {
+                    if (userData && userData.name) {
+                        const userNameElement = document.getElementById('userName');
+                        userNameElement.textContent = `Name: ${userData.name}`;
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        });
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePage();
+            }
+        }
+
+        function nextPage() {
+            const totalItems = document.querySelectorAll('.col.searchable-item').length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePage();
+            }
+        }
+
+        function updatePage() {
+            const items = document.querySelectorAll('.col.searchable-item');
+            const startIdx = (currentPage - 1) * itemsPerPage;
+            const endIdx = startIdx + itemsPerPage;
+
+            items.forEach((item, idx) => {
+                if (idx >= startIdx && idx < endIdx) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            const totalItems = document.querySelectorAll('.col.searchable-item').length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            document.getElementById('currentPage').innerText = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        function searchItems() {
+            const searchInput = document.getElementById('search-bar').value.toLowerCase();
+            const items = document.querySelectorAll('#tblAsset .col');
+
+            items.forEach(item => {
+                const itemName = item.getAttribute('data-title').toLowerCase();
+                const itemId = item.querySelector('.card-text').textContent.toLowerCase();
+
+                if (itemName.includes(searchInput) || itemId.includes(searchInput)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        //get Product
+        const tblProduct = document.querySelector('#tblAsset');
+        getProducts();
+        //---------------GET PRODUCTS-----------------
+        async function getProducts() {
+            // get product data from server
+            try {
+                const response = await fetch('/assetuser');
+                if (response.ok) {
+                    const data = await response.json();
+                    let rows = '';
+                    data.forEach(function (asset) {
+                        rows += `<div class="col searchable-item" data-title=${asset.assetname}>`
+                        rows += `<div class="card text-dark bg-light mb-3" id=${asset.assetid} style="height: 100%;">`
+                        rows += `<div class="card-header">`
+                        rows += `<h5 class="card-title">${asset.assetname}</h5></div>`
+                        rows += `<div class="card" style="height: 100%;">`
+                        rows += `<img src="/public/img/${asset.assetimage}" class="card-img-top" alt="Item" style="object-fit: contain; height: 100%; width: 100%;">`
+                        rows += `<div class="card-body">`
+                        rows += `<p class="card-text">ID:${asset.assetid}</p></div></div>`
+                        rows += `<div class="text-center mb-3">`
+                        if (asset.status === 'available') {
+                            rows += `<button type="button" class="btn btn-outline-success btn_Borrow btn-lg  mt-3" onclick="openBorrowModal(${asset.assetid});" data-toggle="modal" data-target="#borrowModal">Available</button></div></div></div>`;
+                        } else if (asset.status === 'borrowed') {
+                            rows += `<button type="button" class="btn btn-outline-secondary btn-lg mt-3" disabled>Borrowed</button></div></div></div>`;
+                        } else {
+                            rows += `<button type="button" class="btn btn-outline-danger btn-lg mt-3" disabled>Disabled</button></div></div></div>`;
+                        }
+                    });
+                    tblProduct.innerHTML = rows;
+                    updatePage();
+                }
+                else if (response.status == 500) {
+                    const data = response.text();
+                    throw Error(data);
+                }
+            } catch (err) {
+                console.error(err.message);
+                Notiflix.Report.failure('Error', err.message, 'Close');
+            }
+        }
+
+        let userId;
+        getUser();
+        // ---------------GET User info-----------------
+        async function getUser() {
+            try {
+                const response = await fetch('/user');
+                if (response.ok) {
+                    const data = await response.json();
+                    userId = data.userid;
+                } else {
+                    throw Error('Connection error');
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // เพิ่มฟังก์ชันเพื่อรีเซ็ตค่าวันที่ใน Modal
+        function resetModalDate() {
+            document.getElementById('borrowingDate').value = '';
+            document.getElementById('returnDate').value = '';
+        }
+
+        function openBorrowModal(assetID) {
+            resetModalDate();
+            document.getElementById('selectedAssetID').value = assetID;
+            $('#borrowModal').modal('show');
+        }
+
+        document.getElementById('borrowForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the form data
+            const assetID = document.getElementById('selectedAssetID').value;
+            const userborrowID = userId;
+            const borrowingDate = document.getElementById('borrowingDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+
+            const borrowData = {
+                assetid: assetID,
+                userborrowID: userborrowID,
+                borrowingdate: borrowingDate,
+                returndate: returnDate,
+            };
+
+            const updateData = {
+                assetid: assetID,
+                // ลบอันนี้
+                // status: "borrowed",
+            };
+
+            // Perform the AJAX request to your PHP script
+            fetch('/assetrequest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(borrowData),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Borrow request failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the response from the server (if needed)
+                    console.log(data);
+
+                    // Check if the response contains an error
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your request has been submitted successfully.',
+                    });
+                })
+                .then(() => {
+                    // If the borrow request was successful, update the status
+                    return fetch('/assetrequest', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(updateData),
+                    });
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('การอัปเดตสถานะล้มเหลว');
+                    }
+                    // ในกรณีที่ตอบกลับเป็นข้อความธรรมดา ไม่ใช่ JSON
+                    return response.text();
+                })
+                .then(data => {
+                    // ตรวจสอบว่าข้อความตอบกลับมีข้อความ "Update successfully"
+                    if (data === "Update successfully") {
+                        // ปิด Modal เมื่อส่งคำร้องขอสำเร็จ
+                        getProducts();
+                        $('#borrowModal').modal('hide');
+                    } else {
+                        throw new Error('การอัปเดตสถานะล้มเหลว');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: error.message || 'Something went wrong! Please try again later.',
+                    });
+                });
+        });
+
+
+    </script>
+
+
+    </script>
+
+</body>

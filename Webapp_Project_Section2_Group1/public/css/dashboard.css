@@ -1,0 +1,38 @@
+/* Available / */
+.card_Available:hover {
+    cursor: pointer; 
+}
+
+.card_Available:hover .h2 {
+    color: #ffffff; 
+}
+
+.card_Available:hover i {
+    color: #ffffff; 
+}
+
+/* / Disabled / */
+.card_Disabled:hover {
+    cursor: pointer;
+}
+
+.card_Disabled:hover .h2 {
+    color: #000000;
+}
+
+.card_Disabled:hover i {
+    color: #000000;
+}
+
+/* / Borrowed / */
+.card_Borrowed:hover {
+    cursor: pointer;
+}
+
+.card_Borrowed:hover .h2 {
+    color: #000000;
+}
+
+.card_Borrowed:hover i {
+    color: #000000; 
+}

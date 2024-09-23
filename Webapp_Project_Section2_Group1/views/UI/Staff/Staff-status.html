@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <!-- for search bar -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <!-- icon and navbar css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/public/css/navbar1.css">
+    <title>Return Asset</title>
+
+    <style>
+        #logo {
+            width: 50px;
+        }
+
+        #textStatus {
+            width: 175px;
+            background-color: blue;
+            text-align: center;
+            /* Center the text horizontally */
+            border-radius: 3px;
+            /* Optional: Add rounded corners */
+            margin: 0 10px;
+            /* Center the box horizontally */
+            font-size: 25px;
+        }
+
+        .textStatusApprove {
+            color: green;
+            font-size: 20px;
+        }
+
+        .textStatusWaiting {
+            color: grey;
+            font-size: 20px;
+        }
+
+        .textStatusReject {
+            color: red;
+            font-size: 20px;
+        }
+
+        #picCheck {
+            width: 50px;
+        }
+
+        .topcon div {
+            display: flex;
+            align-items: center;
+            /* จัดให้องค์ประกอบภายในอยู่ตรงกลางแนวตั้ง */
+        }
+
+        .topcon {
+            background-color: rgb(255, 255, 255);
+            border-radius: 10px;
+        }
+
+        .picItem {
+            width: 50px;
+        }
+
+        #table-body td {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="">
+
+    <!-- navbar -->
+    <div class="topnav">
+        <div class="active nav-item">
+            <div class="row">
+                <img id="logo" src="/public/img/MFU.png" style="width: 86px;">
+                <p class="text1 col mt-3">MFU ASSET BORROW</p>
+                <p class="title col mt-3 text-end mx-4" id="userName">Name: </p>
+            </div>
+
+        </div>
+        <div id="myLinks">
+            <nav class="navbar navbar-expand-md">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mt-2 mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <i class="bi bi-clipboard-data"></i>
+                                <a class="navbar-link" href='/staff'>Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-card-list"></i>
+                                <a class="navbar-link" href='/staff/itemlist'>Item List</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <a class="navbar-link" href='/staff/yourlist'>Your List</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-arrow-return-right"></i>
+                                <a class="navbar-link" href='/staff/checkstatus'>Return Asset</a>
+                            </li>
+                            <li class="nav-item">
+                                <i class="bi bi-clock-history"></i>
+                                <a class="navbar-link" href='/staff/history'>History</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <a class="btn btn-danger ml-auto" href="/logout">Logout</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- detail -->
+    <div class="table container-fluid pt-5" id="conbody" style="margin-left: 12px;">
+        <div class="container-fluid row rounded tablecolor">
+            <div class="container bg-white mt-4 mb-4 rounded tablecolor2">
+                <div class="container-fluid d-flex p-2 tablecolor3">
+                    <div class="d-inline-block"><img id="logo" src="/public/img/check-list.png"></div>
+                    <div class="d-inline-flex w-75 p-2">
+                        <div
+                            class="container font-weight-bold rounded  text-center text-white w-25 pt-2 pb-2 p-5 showstatus">
+                            Return Asset</div>
+                        <div class="d-inline-block mx-3"></div>
+                        <div class="input-group">
+                            <input type="search" id="searchInput" class="form-control rounded" placeholder="Search"
+                                aria-label="Search" aria-describedby="search-addon" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table mt-2 mb-2">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col"> </th>
+                                <th scope="col">Image</th>
+                                <th scope="col"> </th>
+                                <th scope="col">Item</th>
+                                <th scope="col"> Status</th>
+                                <th scope="col">Action</th>
+                                <th scope="col"> </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblAsset">
+
+                        </tbody>
+                    </table>
+                    <div class="pagination pt-5 d-flex justify-content-center ">
+                        <button id="prevBtn" class="btn btn-outline-success mx-3" onclick="prevPage()">
+                            <</button>
+                                <span id="currentPage">Page 1</span>
+                                <button id="nextBtn" class="btn btn-outline-success mx-3" onclick="nextPage()">></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 8; // You can adjust this value based on your preference
+        let filteredData; // Assuming this variable holds the filtered data
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/user')
+                .then(response => response.json())
+                .then(userData => {
+                    if (userData && userData.name) {
+                        const userNameElement = document.getElementById('userName');
+                        userNameElement.textContent = `Name: ${userData.name}`;
+                    }
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        });
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                getProducts();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                getProducts();
+            }
+        }
+
+        function updatePaginationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (filteredData) {
+                const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+                document.getElementById('currentPage').innerText = `Page ${currentPage} of ${totalPages}`;
+
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            getProducts();
+            updatePaginationButtons();
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function () {
+            currentPage = 1; // Reset current page when search changes
+            getProducts();
+        });
+
+        function returnProduct(id) {
+            Swal.fire({
+                title: 'Are you sure to return this?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#339933',
+                cancelButtonColor: '#FF0033',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/assetstaffReturn/${id}`, {
+                        method: `PUT`,
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: "available" })
+                    })
+                        .then(function (response) {
+                            if (response.ok) {
+                                Swal.fire(
+                                    'Return Success!'
+                                );
+                                getProducts();
+                            }
+                        })
+                        .catch(function (err) {
+                            console.error(err);
+                            alert(err);
+                        });
+                }
+            });
+        }
+
+        //get Product
+        const tblProduct = document.querySelector('#tblAsset');
+
+        async function getProducts() {
+            // get product data from server
+            try {
+                const response = await fetch('/assetstaff');
+                if (response.ok) {
+                    const data = await response.json();
+                    let rows = '';
+
+                    // Filter based on the search input
+                    filteredData = data.filter(asset =>
+                        asset.status === 'borrowed' &&
+                        (asset.assetid.toString().includes(searchInput.value) ||
+                            asset.assetname.toLowerCase().includes(searchInput.value.toLowerCase())
+                        )
+                    );
+
+                    const startIndex = (currentPage - 1) * itemsPerPage;
+                    const endIndex = startIndex + itemsPerPage;
+                    const paginatedData = filteredData.slice(startIndex, endIndex);
+
+                    paginatedData.forEach(function (asset) {
+                        rows += `<tr><th scope="row">${asset.assetid}</th>`
+                        rows += `<th></th>`
+                        rows += `<td <div class="pt-2 pb-2"><img id="logo" src="/public/img/${asset.assetimage}"></div></td>`
+                        rows += `<th></th>`
+                        rows += `<td><div class=" text-center pt-2 pb-2">${asset.assetname}</div></td>`
+                        rows += `<td><div class=" text-center text-secondary pt-2 pb-2">Borrowed</div></td>`
+                        rows += ` <td><div class="btnReturn btn container-fluid text-center text-white rounded-pill btn-secondary pt-2 pb-2" onclick="returnProduct(${asset.assetid})">Return</div></td>  `
+                        rows += `<th></th></tr>`
+                    });
+
+                    tblProduct.innerHTML = rows;
+                    updatePaginationButtons();
+                } else if (response.status == 500) {
+                    const data = await response.text();
+                    throw Error(data);
+                }
+            } catch (err) {
+                console.error(err.message);
+                Notiflix.Report.failure('Error', err.message, 'Close');
+            }
+        }
+    </script>
+</body>
+
+</html>

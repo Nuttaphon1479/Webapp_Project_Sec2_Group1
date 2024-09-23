@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;1,400&display=swap');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* เว้นระยะห่าง topnavbar อย่าลืมใส่ #conbody ทุก table และ ลบ mt-3*/
+#conbody {
+    margin-top: 10em;
+    /* margin-left: 12px;  */
+}
+
+#conbody1 {
+    margin-top: 10em;
+
+}
+
+/* Reset some default styles */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    background-color: #4F4A45;
+}
+
+#content
+{
+    background-color: #F6F1EE;
+}
+
+/* Style for the Top Navigation Menu */
+/* เพิ่ม position width top left เพื่อให้อยู่ด้านบน */
+.topnav {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    overflow: hidden;
+    background-color: #ED7D31;
+    color: white;
+    border-radius: 0em 0em 0em 0em;
+    padding: 13px;
+}
+
+.topnav #logo {
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.topnav .text1 {
+    font-size: 20px;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.topnav .user-text {
+    font-size: 16px;
+    vertical-align: middle;
+    /* float: right; */
+}
+
+.topnav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+}
+
+.topnav a:hover {
+    background-color: #6C5F5B;
+    border-radius: 8px;
+    color: black;
+}
+
+/* Style for the mobile menu icon */
+.topnav .icon {
+    background: black;
+    color: white;
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 10px;
+}
+
+#myLinks {
+    background-color: #E2C799;
+    ;
+    border-radius: 1em;
+    margin-top: 1em;
+}
+
+.tablecolor {
+    background-color: #6C5F5B;
+}
+
+.tablecolor2 {
+    background-color: #F6F1EE;
+}
+
+.tablecolor3 {
+    background-color: #F6F1EE;
+}
+
+.showstatus {
+    background-color: #E2C799;
+}
+
+.btnsearch {
+    background-color: #E2C799;
+}
+
+/* ทำตารางให้อยู่ตรงกลาง */
+.table td,
+.table th {
+    text-align: center;
+}
+
+/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+@media screen and (max-width: 768px) {
+    .topnav.responsive {
+        position: relative;
+    }
+
+    .topnav.responsive a.icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .topnav.responsive a {
+        float: none;
+        display: block;
+        text-align: left;
+    }
+
+    /* เวลาย่อหน้าจอทำให้ ตัวแสดงตารางว่าอะไรแล้วไม่ติด */
+    /* #conbody {
+        margin-top: 20em;
+    } */
+
+}
